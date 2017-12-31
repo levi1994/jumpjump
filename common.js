@@ -40,18 +40,13 @@ function getTargetPosition(pixels) {
             if(!rgbCompare(prev, point, 10) && !rgbCompare(point, TIPS_RGB) && !rgbCompare(point, SELF_RGB) 
                 && !rgbCompare(prev, TIPS_RGB) && !rgbCompare(prev, SELF_RGB)) {
                 pointList.push([x, y, point, prev]);
-                if(y === 1046 && x === 371) {
-                    console.log('bbb');
-                }
                 if(pointList.length > 0 && rgbCompare(prev, pointList[0][2])) {
-                    console.log('break');
                     break;
                 }
             }
             prev = point;
         }
     }
-    console.log(pointList[0]);
     let plist = [];
     // 首个点的颜色确定目标的颜色，再通过相同颜色的点的集合(方圆150坐标以内)取平均值，拿到平台中点坐标
     var platColor = pointList[0][2];
@@ -65,12 +60,8 @@ function getTargetPosition(pixels) {
             sumy += p[1];
             num ++;
             plist.push(p);
-            if(p[1] === 1046 && p[0] === 371) {
-                console.log('bbb');
-            }
         }
     }
-    console.log(JSON.stringify(plist));
     return [parseInt(sumx/num), parseInt(sumy/num), platColor];
 }
 
