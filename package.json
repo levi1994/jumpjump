@@ -1,0 +1,18 @@
+{
+  "name": "jumpjump",
+  "version": "1.0.0",
+  "description": "wechat jump tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "wechat",
+    "jump"
+  ],
+  "author": "lichun",
+  "license": "MIT",
+  "dependencies": {
+    "get-pixels": "^3.3.0"
+  }
+}
