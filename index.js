@@ -57,7 +57,7 @@ function resolveImg() {
         }
         // 计算棋子的位置
         let sp = common.getSelfPosition(pixels);
-        let tp = common.getTargetPosition(pixels);
+        let tp = common.getTargetPosition(pixels, sp);
         console.log('起点：', JSON.stringify(sp));
         console.log('终点：', JSON.stringify(tp));
         // 计算距离
