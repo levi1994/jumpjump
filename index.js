@@ -14,6 +14,8 @@ const IMG_PATH = './temp';
 // 操作的间隔时间（间隔时间太小易被提示信息干扰）
 const WAIT_TIME = 4500;
 
+global.debug = true;
+
 // 为了便于调试，为每一轮操作加上识别ID
 let oid = 0;
 var log = console.log;
@@ -24,8 +26,6 @@ console.log = function() {
 function getOid() {
     if(oid === 10) {
         oid = 0;
-    } else {
-        console.log('++');
         oid = ++oid;
     }
     return oid;
@@ -71,7 +71,6 @@ function resolveImg() {
             time = common.caculateTime(distance);
         }
         console.log('时间：' + time);
-        console.log('当前系数：' + DISTANCE_ARG);
         doIt(time);
     })
 }

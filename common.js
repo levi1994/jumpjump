@@ -23,11 +23,16 @@ const SHADOW_RGBS = [
     [144, 123, 82],
     [111, 114, 131],
     [148, 152, 175],
+    [192, 213, 233],
+    [132, 137, 169],
 ]
 
-
-// 默认的距离时间系数
-DISTANCE_ARG = 1.5;
+var log = console.log;
+console.log = function() {
+    if(global.debug) {
+        log(...arguments);
+    }
+}
 
 // 获得棋子的位置
 function getSelfPosition(pixels) {
@@ -52,6 +57,7 @@ function getTargetPosition(pixels, sp) {
     let pointList = [];
     let searchStart;
     let searchEnd;
+    console.log(sp);
     if(sp[0] > DEVICE_SCREEN.width/2) {
         console.log('搜索左边');
         searchStart = 0;
@@ -70,7 +76,7 @@ function getTargetPosition(pixels, sp) {
             let point = [pixels.get(x,y,0), pixels.get(x,y,1), pixels.get(x,y,2)];
             // 如果颜色不相近，则视为边缘
             // 避免把提示颜色算进去
-            if(!rgbCompare(prev, point, 10)) {
+            if(!rgbCompare(prev, point, 20)) {
                 pointList.push([x, y, point, prev]);
                 if(pointList.length > 0 && rgbCompare(prev, pointList[0][2])) {
                     break;
@@ -82,15 +88,15 @@ function getTargetPosition(pixels, sp) {
     // 得到顶点
     let topPoint = pointList[0];
     console.log('顶点颜色是：');
-    console.log(topPoint[2]);
+    console.log(topPoint);
     let borderPoint;
     if(topPoint[0] > DEVICE_SCREEN.width / 2) {
         // 右点
-        borderPoint = findRightPoint(pixels);
+        borderPoint = findRightPoint(pixels, topPoint[2]);
         console.log('获得极右点');
         console.log(borderPoint);
     } else {
-        borderPoint = findLeftPoint(pixels);
+        borderPoint = findLeftPoint(pixels, topPoint[2]);
         console.log('获得极左点');
         console.log(borderPoint);
     }
@@ -99,7 +105,7 @@ function getTargetPosition(pixels, sp) {
 
 // 找极左点
 // y(700-900)
-function findLeftPoint (pixels) {
+function findLeftPoint (pixels, topColor) {
     let prev = [pixels.get(10,500,0), pixels.get(10,500,1), pixels.get(10,500,2)];
     let pointList = [];
     // 从左往右，从上往下，找到的第一个点就是极左点
@@ -107,7 +113,7 @@ function findLeftPoint (pixels) {
         prev = [pixels.get(x,700,0), pixels.get(x,700,1), pixels.get(x,700,2)];
         for(let y=700;y<1000;y++) {
             let point = [pixels.get(x,y,0), pixels.get(x,y,1), pixels.get(x,y,2)];
-            if(!rgbCompare(prev, point, 10) && !isShadow(point) ) {
+            if(!rgbCompare(prev, point, 20) && !isShadow(point) && rgbCompare(point, topColor) ) {
                 pointList.push([x, y, point, prev]);
             }
         }
@@ -116,7 +122,7 @@ function findLeftPoint (pixels) {
 }
 
 // 找极右点
-function findRightPoint (pixels) {
+function findRightPoint (pixels, topColor) {
     let prev = [pixels.get(10,500,0), pixels.get(10,500,1), pixels.get(10,500,2)];
     let pointList = [];
     // 从右往左，从上往下，找到的第一个点就是极左点
@@ -124,7 +130,7 @@ function findRightPoint (pixels) {
         prev = [pixels.get(x,700,0), pixels.get(x,700,1), pixels.get(x,700,2)];
         for(let y=700;y<1000;y++) {
             let point = [pixels.get(x,y,0), pixels.get(x,y,1), pixels.get(x,y,2)];
-            if(!rgbCompare(prev, point, 10) && !isShadow(point) && !isShadow(point)  ) {
+            if(!rgbCompare(prev, point, 20) && !isShadow(point) && rgbCompare(point, topColor, 5)  ) {
                 pointList.push([x, y, point, prev]);
             }
         }
@@ -152,25 +158,9 @@ function getDelta(sp, tp) {
 // 根据距离测算触摸时间
 // 在距离比较近的时候需要特殊处理
 function caculateTime(distance) {
-    let time = parseInt(distance * DISTANCE_ARG);
-    // // 如果time太小的话会出问题
-    // if(time < 500 && time >= 300) {
-    //     console.log('时间过短处理！');
-    //     time = parseInt(time * 1.20);
-    // }
-    // if(time < 300 && time >= 100) {
-    //     console.log('时间过短处理！');
-    //     time = parseInt(time * 1.4);
-    // }
-    // if(time < 100) {
-    //     console.log('时间极短处理！');
-    //     time = 280;
-    // }
-    if(time < 1200) {
-        var addon = parseInt((860 - time) * 0.11);
-        console.log('极小处理：+', addon);
-        time = time + addon;
-    }
+    let pnum = 3.83;
+    let time = parseInt(Math.pow(distance, 0.85) * pnum);
+    console.log(time);
     return time;
 }
 
